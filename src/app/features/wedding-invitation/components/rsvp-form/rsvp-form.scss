@@ -1,4 +1,4 @@
-/* src/app/features/wedding-invitation/components/rsvp-form/rsvp-form.component.scss */
+@use "sass:color";
 
 /* BLOCK: .form-group */
 .form-group {
@@ -63,7 +63,7 @@
   transition: background-color 0.3s;
 
   &:hover {
-    background-color: lighten(#e50914, 10%);
+    background-color: color.adjust(#e50914, $lightness: 10%);
   }
 
   &:disabled {

@@ -1,4 +1,4 @@
-/* src/app/features/wedding-invitation/wedding-invitation.component.scss */
+@use "sass:color";
 
 // Wadah untuk status loading atau not found
 .status-container {
@@ -35,7 +35,7 @@
   transition: background-color 0.3s;
 
   &:hover {
-    background-color: lighten(#e50914, 10%);
+    background-color: color.adjust(#e50914, $lightness: 10%);
   }
 }
 

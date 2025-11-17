@@ -1,7 +1,7 @@
 import {Component, ElementRef, Input, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {InvitationData} from '../../../../core/services/wedding-data';
 import {RsvpForm} from '../../components/rsvp-form/rsvp-form';
-import {DatePipe, TitleCasePipe} from '@angular/common';
+import {DatePipe} from '@angular/common';
 import {Guestbook} from '../../components/guestbook/guestbook';
 import {DigitalAngpao} from '../../components/digital-angpao/digital-angpao';
 import {DomSanitizer, SafeResourceUrl} from '@angular/platform-browser';
@@ -10,7 +10,6 @@ import {DomSanitizer, SafeResourceUrl} from '@angular/platform-browser';
   selector: 'app-netflix-theme',
   imports: [
     RsvpForm,
-    TitleCasePipe,
     Guestbook,
     DigitalAngpao,
     DatePipe
@@ -39,7 +38,8 @@ export class NetflixTheme implements OnInit, OnDestroy {
   // BARU: ViewChild untuk kontainer scroll utama
   @ViewChild('contentContainer') contentContainer!: ElementRef<HTMLElement>;
 
-  constructor(private sanitizer: DomSanitizer) { }
+  constructor(private sanitizer: DomSanitizer) {
+  }
 
   ngOnInit(): void {
     if (this.invitation.youtubeUrl) {
@@ -90,7 +90,7 @@ export class NetflixTheme implements OnInit, OnDestroy {
     // Putar dan un-mute musik (dipicu oleh klik)
     this.playAndUnmuteVideo();
 
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    window.scrollTo({top: 0, behavior: 'smooth'});
     this.startBgCarousel();
   }
 

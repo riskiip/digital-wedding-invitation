@@ -1,4 +1,4 @@
-/* src/app/features/wedding-invitation/components/guestbook/guestbook.component.scss */
+@use "sass:color";
 
 // Variabel (bisa disesuaikan atau diimpor dari file global)
 $card-background: #2b2b2b;
@@ -80,7 +80,7 @@ $primary-red: #bb2f2c;
   transition: background-color 0.3s;
 
   &:hover {
-    background-color: darken($primary-red, 10%);
+    background-color: color.adjust($primary-red, $lightness: -10%);
   }
 
   &:disabled {

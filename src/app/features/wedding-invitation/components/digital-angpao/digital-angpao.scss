@@ -1,4 +1,4 @@
-/* src/app/features/wedding-invitation/components/digital-angpao/digital-angpao.component.scss */
+@use "sass:color";
 
 .angpao-container {
   width: 100%;
@@ -71,6 +71,6 @@
   min-width: 80px; // Agar lebar tombol konsisten
 
   &:hover {
-    background-color: lighten(#e50914, 10%);
+    background-color: color.adjust(#e50914, $lightness: 10%);
   }
 }
