@@ -1,0 +1,172 @@
+<div class="landing-container">
+
+  <nav class="navbar">
+    <div class="navbar__logo">MyDreamWedding</div>
+    <ul class="navbar__menu">
+      <li><a href="#themes">Tema</a></li>
+      <li><a href="#features">Fitur</a></li>
+      <li><a href="#pricing">Harga</a></li> <li><a href="#reviews">Testimoni</a></li> </ul>
+    <button class="navbar__cta">Buat Undangan</button>
+  </nav>
+
+  <header class="hero">
+    <div class="hero__content">
+      <span class="hero__badge">✨ Undangan Digital Premium</span>
+      <h1 class="hero__title">
+        Bagikan Kebahagiaan <br>
+        dengan Gaya <span class="text-gradient">Sinematik</span>
+      </h1>
+      <p class="hero__subtitle">
+        Platform pembuatan undangan pernikahan digital dengan tema unik ala Netflix & Instagram.
+        Cepat, Elegan, dan Mudah Dibagikan.
+      </p>
+      <div class="hero__buttons">
+        <a href="#themes" class="btn btn--primary">Lihat Pilihan Tema</a>
+        <a href="#pricing" class="btn btn--secondary">Lihat Harga</a>
+      </div>
+    </div>
+    <div class="hero__bg-glow"></div>
+  </header>
+
+  <section id="themes" class="section themes">
+    <div class="section__header">
+      <h2>Pilihan Tema Eksklusif</h2>
+      <p>Pilih tampilan yang paling mewakili cerita cinta Anda.</p>
+    </div>
+    <div class="themes__grid">
+      <div class="theme-card">
+        <div class="theme-card__preview netflix-bg">
+          <div class="overlay"><i class="fas fa-play-circle"></i></div>
+          <span class="badge badge--red">Best Seller</span>
+        </div>
+        <div class="theme-card__info">
+          <h3>Netflix Style</h3>
+          <p>Tampilan sinematik dengan layout streaming film. Cocok untuk pasangan yang hobi nonton.</p>
+          <a [routerLink]="['/rizki-pearly']" [queryParams]="{theme: 'netflix'}" target="_blank" class="btn btn--outline">
+            Lihat Demo Netflix
+          </a>
+        </div>
+      </div>
+      <div class="theme-card">
+        <div class="theme-card__preview ig-bg">
+          <div class="overlay"><i class="fab fa-instagram"></i></div>
+          <span class="badge badge--blue">New</span>
+        </div>
+        <div class="theme-card__info">
+          <h3>Instagram Style</h3>
+          <p>Desain modern ala sosial media dengan fitur Story & Feed. Sangat familiar dan kekinian.</p>
+          <a [routerLink]="['/rizki-pearly']" [queryParams]="{theme: 'instagram'}" target="_blank" class="btn btn--outline">
+            Lihat Demo Instagram
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="features" class="section features">
+    <div class="section__header">
+      <h2>Kenapa Memilih Kami?</h2>
+    </div>
+    <div class="features__grid">
+      <div class="feature-item">
+        <div class="icon">⚡</div>
+        <h3>Fast & Responsive</h3>
+        <p>Akses super cepat dan tampilan sempurna di semua perangkat (HP, Tablet, Desktop).</p>
+      </div>
+      <div class="feature-item">
+        <div class="icon">🎵</div>
+        <h3>Background Music</h3>
+        <p>Putar lagu favorit Anda otomatis saat undangan dibuka. Mendukung YouTube.</p>
+      </div>
+      <div class="feature-item">
+        <div class="icon">💌</div>
+        <h3>RSVP & Ucapan</h3>
+        <p>Fitur konfirmasi kehadiran dan buku tamu digital secara realtime.</p>
+      </div>
+      <div class="feature-item">
+        <div class="icon">📍</div>
+        <h3>Peta Lokasi</h3>
+        <p>Integrasi Google Maps akurat agar tamu tidak tersesat menuju lokasi.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="pricing" class="section pricing">
+    <div class="section__header">
+      <h2>Paket Harga</h2>
+      <p>Tanpa biaya tersembunyi. Bayar sekali, aktif selamanya (sesuai paket).</p>
+    </div>
+
+    <div class="pricing__grid">
+      @for (pkg of packages; track pkg.id) {
+        <div class="pricing-card" [class.popular]="pkg.isPopular">
+          @if (pkg.isPopular) { <span class="popular-tag">Most Popular</span> }
+
+          <h3 class="pricing-card__name">{{ pkg.name }}</h3>
+          <div class="pricing-card__price">
+            <span class="currency">Rp</span>
+            <span class="amount">{{ pkg.price }}</span>
+            <span class="period">{{ pkg.period }}</span>
+          </div>
+          <p class="pricing-card__desc">{{ pkg.desc }}</p>
+
+          <hr class="pricing-card__divider">
+
+          <ul class="pricing-card__features">
+            @for (feat of pkg.features; track feat) {
+              <li><i class="fas fa-check-circle"></i> {{ feat }}</li>
+            }
+          </ul>
+
+          <button class="btn btn--block" [class.btn--primary]="pkg.isPopular" [class.btn--outline]="!pkg.isPopular">
+            {{ pkg.buttonText }}
+          </button>
+        </div>
+      }
+    </div>
+  </section>
+
+  <section id="reviews" class="section reviews">
+    <div class="section__header">
+      <h2>Kata Mereka</h2>
+      <p>Pasangan yang telah mempercayakan momen bahagianya kepada kami.</p>
+    </div>
+
+    <div class="reviews__grid">
+      @for (review of reviews; track review.name) {
+        <div class="review-card">
+          <div class="review-card__header">
+            <img [src]="review.avatar" alt="Avatar" class="avatar">
+            <div class="info">
+              <h4>{{ review.name }}</h4>
+              <span class="date">{{ review.date }}</span>
+            </div>
+            <div class="rating">
+              @for (star of [1,2,3,4,5]; track star) {
+                <i class="fas fa-star" [class.active]="star <= review.rating"></i>
+              }
+            </div>
+          </div>
+          <p class="review-card__text">"{{ review.comment }}"</p>
+        </div>
+      }
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="footer__content">
+      <div class="footer__brand">
+        <h3>MyDreamWedding</h3>
+        <p>Platform undangan pernikahan digital kekinian.</p>
+      </div>
+      <div class="footer__links">
+        <a href="#">Instagram</a>
+        <a href="#">WhatsApp</a>
+        <a href="#">Email</a>
+      </div>
+    </div>
+    <p class="footer__copyright">&copy; 2025 MyDreamWedding. All rights reserved.</p>
+    <p class="footer__credits">Built with ❤️ using Angular</p>
+  </footer>
+
+</div>

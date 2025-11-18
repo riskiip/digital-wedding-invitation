@@ -36,9 +36,22 @@ export class WeddingInvitation implements OnInit {
     // Kita gunakan 'snapshot' karena ini hanya dibaca sekali saat load
     this.guestName = this.route.snapshot.queryParamMap.get('to');
 
-    // 2. Tentukan tema berdasarkan Subdomain
-    const host = window.location.host; // cth: 'tema1.mydreamwedding.com'
-    // ... bisa ditambahkan tema lain
+    const queryTheme = this.route.snapshot.queryParamMap.get('theme');
+
+    if (queryTheme === 'netflix') {
+      this.themeName = 'netflix';
+    } else if (queryTheme === 'instagram') {
+      this.themeName = 'instagram';
+    } else {
+      // 2. Jika tidak ada query param, baru cek Subdomain (Logic lama Anda)
+      const host = window.location.host;
+      if (host.startsWith('tema1.')) {
+        this.themeName = 'netflix';
+      } else if (host.startsWith('tema2.')) {
+        this.themeName = 'instagram';
+      }
+      // else default theme
+    }
 
     // 3. Ambil data berdasarkan Path Param (:coupleName)
     // Kita pakai .pipe() dan .subscribe() untuk mengelola alur data
