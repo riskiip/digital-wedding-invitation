@@ -1,13 +1,14 @@
-import {Component, ElementRef, Input, OnDestroy, OnInit, ViewChild} from '@angular/core';
-import {InvitationData} from '../../../../core/services/wedding-data';
-import {RsvpForm} from '../../components/rsvp-form/rsvp-form';
-import {DatePipe, TitleCasePipe} from '@angular/common';
-import {Guestbook} from '../../components/guestbook/guestbook';
-import {DigitalAngpao} from '../../components/digital-angpao/digital-angpao';
-import {DomSanitizer, SafeResourceUrl} from '@angular/platform-browser';
+import { Component, ElementRef, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { InvitationData } from '../../../../core/services/wedding-data';
+import { RsvpForm } from '../../components/rsvp-form/rsvp-form';
+import { DatePipe, TitleCasePipe } from '@angular/common';
+import { Guestbook } from '../../components/guestbook/guestbook';
+import { DigitalAngpao } from '../../components/digital-angpao/digital-angpao';
+import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-netflix-theme',
+  standalone: true, // Pastikan ini true
   imports: [
     RsvpForm,
     Guestbook,
@@ -20,27 +21,23 @@ import {DomSanitizer, SafeResourceUrl} from '@angular/platform-browser';
 })
 export class NetflixTheme implements OnInit, OnDestroy {
 
-  // Data dari komponen induk
   @Input() invitation!: InvitationData;
   @Input() guest: string | null = null;
 
-  // State untuk kontrol UI
   public isCoverActive: boolean = true;
   public isContentActive: boolean = false;
+  public isMusicPlaying: boolean = false; // State musik
 
-  // Properti YouTube Player
   public youtubeEmbedUrl: SafeResourceUrl | null = null;
+
   @ViewChild('youtubePlayer') youtubePlayerRef!: ElementRef<HTMLIFrameElement>;
 
-  // Properti Carousel Background
   public currentBgIndex: number = 0;
   private bgCarouselInterval: any;
 
-  // BARU: ViewChild untuk kontainer scroll utama
   @ViewChild('contentContainer') contentContainer!: ElementRef<HTMLElement>;
 
-  constructor(private sanitizer: DomSanitizer) {
-  }
+  constructor(private sanitizer: DomSanitizer) {}
 
   ngOnInit(): void {
     if (this.invitation.youtubeUrl) {
@@ -49,78 +46,100 @@ export class NetflixTheme implements OnInit, OnDestroy {
     }
   }
 
-  /**
-   * (Fungsi ini tidak berubah)
-   * Membangun URL YouTube yang benar untuk kontrol JavaScript (JS API).
-   */
+  // --- PERBAIKAN 1: Regex Video ID ---
+  private getYouTubeVideoId(url: string): string {
+    // Regex ini lebih fleksibel untuk berbagai format URL YouTube
+    const regex = /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/ ]{11})/i;
+    const match = url.match(regex);
+    const id = match ? match[1] : '';
+    console.log('Video ID:', id); // Cek di console apakah ID muncul (vZYMI7BeOAg)
+    return id;
+  }
+
+  // --- PERBAIKAN 2: Domain & Parameter ---
   private buildYoutubeUrl(url: string): string {
-    const urlObj = new URL(url);
     const videoId = this.getYouTubeVideoId(url);
 
-    urlObj.searchParams.delete('autoplay');
-    urlObj.searchParams.set('mute', '1'); // Mulai dengan mute
+    // Gunakan domain nocookie untuk menghindari Error 153
+    const baseUrl = `https://www.youtube-nocookie.com/embed/${videoId}`;
+    const urlObj = new URL(baseUrl);
+
     urlObj.searchParams.set('enablejsapi', '1');
     urlObj.searchParams.set('origin', window.location.origin);
+
+    // SET Autoplay=1 (Jangan di-delete!)
+    urlObj.searchParams.set('autoplay', '1');
+    // Mute=1 Wajib agar autoplay jalan di Chrome
+    urlObj.searchParams.set('mute', '1');
+
     urlObj.searchParams.set('controls', '0');
     urlObj.searchParams.set('showinfo', '0');
-    urlObj.searchParams.set('modestbranding', '1');
+    urlObj.searchParams.set('rel', '0');
     urlObj.searchParams.set('loop', '1');
     urlObj.searchParams.set('playlist', videoId);
 
     return urlObj.toString();
   }
 
-  /**
-   * (Fungsi ini tidak berubah)
-   * Helper untuk mengambil ID video dari URL YouTube.
-   */
-  private getYouTubeVideoId(url: string): string {
-    const regex = /(?:youtube\.com\/(?:[^\/]+\/.+\/|\/(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/ ]{11})/i;
-    const match = url.match(regex);
-    return match ? match[1] : '';
+  get formattedGuestName(): string {
+    if (!this.guest) return '';
+    return this.guest.replace(/-/g, ' ');
   }
 
-  /**
-   * (Fungsi ini tidak berubah)
-   * Dipanggil saat tombol "Open Invitation" diklik.
-   */
   openInvitation(): void {
     this.isCoverActive = false;
     this.isContentActive = true;
+    this.isMusicPlaying = true;
 
-    // Putar dan un-mute musik (dipicu oleh klik)
+    // Trigger Play
     this.playAndUnmuteVideo();
 
-    window.scrollTo({top: 0, behavior: 'smooth'});
+    setTimeout(() => {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }, 100);
+
     this.startBgCarousel();
   }
 
-  /**
-   * (Fungsi ini tidak berubah)
-   * Mengirim DUA perintah: 'playVideo' DAN 'unMute'
-   */
-  playAndUnmuteVideo(): void {
-    const contentWindow = this.youtubePlayerRef?.nativeElement?.contentWindow;
-    if (contentWindow) {
-      // 1. Perintah untuk PUTAR VIDEO
-      contentWindow.postMessage(
-        '{"event":"command","func":"playVideo","args":""}',
-        'https://www.youtube.com'
-      );
-      // 2. Perintah untuk UNMUTE VIDEO
-      contentWindow.postMessage(
-        '{"event":"command","func":"unMute","args":""}',
-        'https://www.youtube.com'
-      );
+  toggleMusic(): void {
+    if (!this.youtubePlayerRef) return;
+
+    const contentWindow = this.youtubePlayerRef.nativeElement.contentWindow;
+    if (!contentWindow) return;
+
+    if (this.isMusicPlaying) {
+      contentWindow.postMessage(JSON.stringify({ event: 'command', func: 'pauseVideo', args: [] }), '*');
+      this.isMusicPlaying = false;
     } else {
-      console.warn('Referensi YouTube Player tidak ditemukan.');
+      contentWindow.postMessage(JSON.stringify({ event: 'command', func: 'playVideo', args: [] }), '*');
+      this.isMusicPlaying = true;
     }
   }
 
-  /**
-   * (Fungsi ini tidak berubah)
-   * Memulai interval untuk mengganti background image di hero section.
-   */
+  playAndUnmuteVideo(): void {
+    if (!this.youtubePlayerRef) return;
+
+    const iframe = this.youtubePlayerRef.nativeElement;
+    const contentWindow = iframe.contentWindow;
+
+    if (contentWindow) {
+      // Play (dalam keadaan mute)
+      contentWindow.postMessage(
+        JSON.stringify({ event: 'command', func: 'playVideo', args: [] }), '*'
+      );
+
+      // Unmute setelah sedikit delay
+      setTimeout(() => {
+        contentWindow.postMessage(
+          JSON.stringify({ event: 'command', func: 'unMute', args: [] }), '*'
+        );
+        contentWindow.postMessage(
+          JSON.stringify({ event: 'command', func: 'setVolume', args: [100] }), '*'
+        );
+      }, 500);
+    }
+  }
+
   startBgCarousel(): void {
     if (this.invitation.gallery.length > 1 && !this.bgCarouselInterval) {
       this.bgCarouselInterval = setInterval(() => {
@@ -129,10 +148,6 @@ export class NetflixTheme implements OnInit, OnDestroy {
     }
   }
 
-  /**
-   * FUNGSI BARU: Untuk navigasi navbar.
-   * Fungsi ini akan men-scroll KONTENER, bukan 'window'.
-   */
   scrollToSection(sectionId: string): void {
     if (!this.contentContainer) return;
 
@@ -140,9 +155,8 @@ export class NetflixTheme implements OnInit, OnDestroy {
     const section = container.querySelector(`#${sectionId}`) as HTMLElement;
 
     if (section) {
-      const headerOffset = 60; // Tinggi navbar kita
+      const headerOffset = 60;
       const sectionTop = section.offsetTop;
-
       container.scrollTo({
         top: sectionTop - headerOffset,
         behavior: 'smooth'
@@ -150,16 +164,6 @@ export class NetflixTheme implements OnInit, OnDestroy {
     }
   }
 
-  get formattedGuestName(): string {
-    if (!this.guest) return '';
-    // Mengganti semua tanda hubung (-) dengan spasi
-    return this.guest.replace(/-/g, ' ');
-  }
-
-  /**
-   * (Fungsi ini tidak berubah)
-   * Bersihkan interval saat komponen dihancurkan.
-   */
   ngOnDestroy(): void {
     if (this.bgCarouselInterval) {
       clearInterval(this.bgCarouselInterval);
