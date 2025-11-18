@@ -9,7 +9,8 @@ export interface InvitationData {
   eventDetails: any;
   gallery: string[];
   bridePhotoUrl: string; // <-- BARU
-  groomPhotoUrl: string; // <-- BARU
+  groomPhotoUrl: string; // <-- BARU,
+  theme: string
 }
 
 const DUMMY_DATA: { [key: string]: InvitationData } = {
@@ -21,18 +22,20 @@ const DUMMY_DATA: { [key: string]: InvitationData } = {
     eventDetails: { date: '2025-12-25T09:00:00', location: 'Gedung A' },
     gallery: ['images/1.jpg', 'images/2.jpg', 'images/3.jpg', 'images/4.jpg', 'images/5.jpg', 'images/6.jpg'],
     bridePhotoUrl: 'images/5.jpg',
-    groomPhotoUrl: 'images/4.jpg'
+    groomPhotoUrl: 'images/4.jpg',
+    theme: 'instagram'
   },
-  'budi-susi': {
-    coupleName: 'budi-susi',
-    brideName: 'Susi',
-    groomName: 'Budi',
-    youtubeUrl: 'https://www.youtube.com/embed/L_jWHffIx5E',
-    eventDetails: { date: '30 Januari 2026', location: 'Pantai Indah' },
-    gallery: ['url/foto3.jpg', 'url/foto4.jpg'],
+  'pearly-rizki': {
+    coupleName: 'rizki-pearly',
+    brideName: 'Pearly',
+    groomName: 'Rizki',
+    youtubeUrl: 'https://www.youtube.com/embed/vZYMI7BeOAg', // Ganti dengan ID lagu
+    eventDetails: { date: '2025-12-25T09:00:00', location: 'Gedung A' },
+    gallery: ['images/1.jpg', 'images/2.jpg', 'images/3.jpg', 'images/4.jpg', 'images/5.jpg', 'images/6.jpg'],
     bridePhotoUrl: 'images/5.jpg',
-    groomPhotoUrl: 'images/4.jpg'
-  }
+    groomPhotoUrl: 'images/4.jpg',
+    theme: 'netflix'
+  },
 };
 
 @Injectable({

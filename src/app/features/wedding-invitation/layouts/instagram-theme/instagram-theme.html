@@ -1,0 +1,225 @@
+<div class="ig-container">
+
+  @if (isStoryActive) {
+    <div class="ig-story-overlay" (click)="openInvitation()">
+      <div class="ig-story-bg" [style.backgroundImage]="'url(' + invitation.gallery[0] + ')'"></div>
+      <div class="ig-story-header">
+        <div class="progress-bars">
+          <div class="bar"><div class="fill" [style.width.%]="storyProgress"></div></div>
+        </div>
+        <div class="user-info">
+          <img [src]="invitation.bridePhotoUrl" class="avatar" alt="Avatar">
+          <span class="username">{{ invitation.groomName }} & {{ invitation.brideName }}</span>
+          <span class="time">Sponsored</span>
+          <i class="fas fa-ellipsis-h ms-auto text-white"></i>
+        </div>
+      </div>
+      <div class="ig-story-content">
+        <div class="glass-box">
+          <p>Dear,</p>
+          <h2>{{ formattedGuestName | titlecase }}</h2>
+          <span class="tap-hint">Tap to open <i class="fas fa-chevron-right"></i></span>
+        </div>
+      </div>
+      <div class="ig-story-footer">
+        <div class="reply-box">Send message...</div>
+        <i class="far fa-heart"></i>
+        <i class="far fa-paper-plane"></i>
+      </div>
+    </div>
+  }
+
+  @if (!isStoryActive) {
+    <main class="ig-feed" #contentContainer>
+
+      <nav class="ig-navbar">
+        <div class="logo">The Wedding</div>
+        <div class="actions">
+          <i class="far fa-heart"></i>
+          <i class="far fa-paper-plane"></i>
+        </div>
+      </nav>
+
+      <div class="ig-stories-bar">
+        <div class="story-item" (click)="scrollToSection('coupleSection')">
+          <div class="ring"><img [src]="invitation.bridePhotoUrl" alt="Couple"></div>
+          <span>Couple</span>
+        </div>
+        <div class="story-item" (click)="scrollToSection('eventSection')">
+          <div class="ring"><img [src]="invitation.groomPhotoUrl" alt="Event"></div>
+          <span>Event</span>
+        </div>
+        <div class="story-item" (click)="scrollToSection('gallerySection')">
+          <div class="ring"><i class="fas fa-images"></i></div>
+          <span>Gallery</span>
+        </div>
+        <div class="story-item" (click)="scrollToSection('rsvpSection')">
+          <div class="ring"><i class="fas fa-envelope-open-text"></i></div>
+          <span>RSVP</span>
+        </div>
+      </div>
+
+      <article class="ig-post" id="coupleSection">
+        <header>
+          <img [src]="invitation.bridePhotoUrl" class="avatar" alt="Ava">
+          <div class="info">
+            <span class="username">{{ invitation.groomName }}_official</span>
+            <span class="location">Bridal Chamber</span>
+          </div>
+          <i class="fas fa-ellipsis-h ms-auto"></i>
+        </header>
+        <div class="post-image">
+          <img [src]="invitation.gallery[0]" alt="Main Post">
+        </div>
+        <div class="actions">
+          <div class="left">
+            <i class="far fa-heart"></i>
+            <i class="far fa-comment"></i>
+            <i class="far fa-paper-plane"></i>
+          </div>
+          <i class="far fa-bookmark ms-auto"></i>
+        </div>
+        <div class="content">
+          <p class="likes">Liked by <b>keluarga.besar</b> and <b>others</b></p>
+          <p class="caption">
+            <span class="username">{{ invitation.groomName }} & {{ invitation.brideName }}</span>
+            Bismillah, mohon doa restu untuk pernikahan kami. 💍
+          </p>
+          <p class="time">{{ invitation.eventDetails.date | date:'longDate' }}</p>
+        </div>
+      </article>
+
+      <article class="ig-post" id="eventSection">
+        <header>
+          <img [src]="invitation.groomPhotoUrl" class="avatar" alt="Ava">
+          <div class="info">
+            <span class="username">save.the.date</span>
+          </div>
+        </header>
+        <div class="post-content-box">
+          <div class="date-display">
+            <span class="month">{{ invitation.eventDetails.date | date:'MMM' }}</span>
+            <span class="day">{{ invitation.eventDetails.date | date:'dd' }}</span>
+            <span class="year">{{ invitation.eventDetails.date | date:'yyyy' }}</span>
+          </div>
+          <div class="details text-center">
+            <p><strong>AKAD & RESEPSI</strong></p>
+            <p><i class="far fa-clock"></i> 08:00 WIB - Selesai</p>
+            <hr class="post-hr">
+            <p><i class="fas fa-map-marker-alt"></i> {{ invitation.eventDetails.location }}</p>
+            <a href="https://goo.gl/maps/xyz" target="_blank" class="ig-btn-link">View on Maps</a>
+          </div>
+        </div>
+        <div class="actions">
+          <div class="left">
+            <i class="far fa-heart"></i>
+            <i class="far fa-comment"></i>
+          </div>
+          <i class="far fa-bookmark ms-auto"></i>
+        </div>
+      </article>
+
+      <article class="ig-post" id="gallerySection">
+        <header>
+          <img [src]="invitation.bridePhotoUrl" class="avatar" alt="Ava">
+          <div class="info">
+            <span class="username">our.memories</span>
+            <span class="location">Everywhere</span>
+          </div>
+          <i class="fas fa-ellipsis-h ms-auto"></i>
+        </header>
+
+        <div class="carousel-container">
+          <div class="carousel-wrapper" (scroll)="onGalleryScroll($event)">
+            @for (photo of invitation.gallery; track $index) {
+              <div class="carousel-item">
+                <img [src]="photo" alt="Gallery Photo">
+              </div>
+            }
+          </div>
+          <div class="carousel-dots">
+            @for (photo of invitation.gallery; track $index; let i = $index) {
+              @if (invitation.gallery.length > 1) {
+                <div class="dot" [class.active]="i === activeGalleryIndex"></div>
+              }
+            }
+          </div>
+          @if (invitation.gallery.length > 1) {
+            <div class="multi-photo-icon"><i class="far fa-clone"></i></div>
+          }
+        </div>
+
+        <div class="actions">
+          <div class="left">
+            <i class="far fa-heart"></i>
+            <i class="far fa-comment"></i>
+            <i class="far fa-paper-plane"></i>
+          </div>
+          <i class="far fa-bookmark ms-auto"></i>
+        </div>
+        <div class="content">
+          <p class="likes">Liked by <b>you</b> and <b>others</b></p>
+          <p class="caption">
+            <span class="username">our.memories</span>
+            Momen indah perjalanan cinta kami. Geser untuk melihat lebih banyak! 📸✨
+          </p>
+        </div>
+      </article>
+
+      <article class="ig-post mb-5" id="rsvpSection">
+        <header>
+          <img [src]="invitation.bridePhotoUrl" class="avatar" alt="Ava">
+          <div class="info">
+            <span class="username">wedding.wishes</span>
+          </div>
+        </header>
+
+        <div class="content p-3">
+          <div class="gift-box mb-3">
+            <h3>Wedding Gift</h3>
+            <app-digital-angpao></app-digital-angpao>
+          </div>
+          <hr class="ig-divider">
+          <h4 class="section-title">Konfirmasi Kehadiran</h4>
+          <app-rsvp-form [invitationId]="invitation.coupleName"></app-rsvp-form>
+          <hr class="ig-divider">
+          <h4 class="section-title">Comments</h4>
+          <app-guestbook></app-guestbook>
+        </div>
+      </article>
+
+    </main>
+
+    <nav class="ig-bottom-nav">
+      <i class="fas fa-home active" (click)="scrollToSection('coupleSection')"></i>
+      <i class="fas fa-search"></i>
+      <i class="far fa-plus-square"></i>
+      <i class="far fa-heart"></i>
+      <img [src]="invitation.bridePhotoUrl" class="mini-avatar" alt="Profile">
+    </nav>
+
+    <div class="music-control" (click)="toggleMusic()" [class.paused]="!isMusicPlaying">
+      <div class="cd-disc">
+        <div class="cd-inner"></div>
+        <img [src]="invitation.gallery[0]" alt="Album Cover" class="cd-cover">
+      </div>
+      <div class="music-notes">
+        <i class="fas fa-music note-1"></i>
+        <i class="fas fa-music note-2"></i>
+      </div>
+    </div>
+  }
+
+  @if (youtubeEmbedUrl) {
+    <div class="youtube-hidden">
+      <iframe #youtubePlayer
+              id="youtubePlayer"
+              [src]="youtubeEmbedUrl"
+              allow="autoplay; encrypted-media; gyroscope; picture-in-picture"
+              referrerpolicy="strict-origin-when-cross-origin"
+              allowfullscreen>
+      </iframe>
+    </div>
+  }
+
+</div>

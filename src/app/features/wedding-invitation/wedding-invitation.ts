@@ -3,11 +3,13 @@ import {switchMap} from 'rxjs/operators';
 import {InvitationData, WeddingData} from '../../core/services/wedding-data';
 import {ActivatedRoute, Router} from '@angular/router';
 import {NetflixTheme} from './layouts/netflix-theme/netflix-theme';
+import {InstagramTheme} from './layouts/instagram-theme/instagram-theme';
 
 @Component({
   selector: 'app-wedding-invitation',
   imports: [
-    NetflixTheme
+    NetflixTheme,
+    InstagramTheme
   ],
   templateUrl: './wedding-invitation.html',
   styleUrl: './wedding-invitation.scss',
@@ -21,7 +23,7 @@ export class WeddingInvitation implements OnInit {
   // Data yang akan di-pass ke komponen tema
   public invitationData: InvitationData | null = null;
   public guestName: string | null = null;
-  public themeName: string = 'netflix'; // Tema fallback
+  public themeName: string | undefined = 'instagram'; // Tema fallback
 
   constructor(
     private route: ActivatedRoute,      // Untuk membaca parameter URL
@@ -36,11 +38,6 @@ export class WeddingInvitation implements OnInit {
 
     // 2. Tentukan tema berdasarkan Subdomain
     const host = window.location.host; // cth: 'tema1.mydreamwedding.com'
-    if (host.startsWith('tema1.')) {
-      this.themeName = 'netflix';
-    } else if (host.startsWith('tema2.')) {
-      this.themeName = 'minimalist';
-    }
     // ... bisa ditambahkan tema lain
 
     // 3. Ambil data berdasarkan Path Param (:coupleName)
@@ -66,6 +63,8 @@ export class WeddingInvitation implements OnInit {
         if (data) {
           // Data berhasil ditemukan
           this.invitationData = data;
+          this.themeName = this.invitationData?.theme;
+          console.log('tema ', this.themeName)
           this.isNotFound = false;
         } else {
           // Data tidak ditemukan (service mengembalikan null)

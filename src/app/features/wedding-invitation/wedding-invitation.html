@@ -14,10 +14,11 @@
 }
 
 @if (!isLoading && !isNotFound && invitationData) {
-  @if (themeName === 'netflix') {
+  @if (themeName === 'instagram') {
+    <app-instagram-theme [invitation]="invitationData" [guest]="guestName" />
+  } @else if (themeName === 'netflix') {
     <app-netflix-theme [invitation]="invitationData" [guest]="guestName" />
-  }
-  @if (themeName === 'default') {
+  } @else if (themeName === 'default') {
     <div class="status-container">
       <h1>Tema Default untuk Undangan Ini</h1>
       <p>Tema tidak terdeteksi atau tidak diset.</p>

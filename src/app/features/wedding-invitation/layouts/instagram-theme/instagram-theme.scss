@@ -1,0 +1,207 @@
+@use "sass:color";
+
+/* === VARIABLES === */
+$ig-bg: #fafafa;
+$ig-white: #ffffff;
+$ig-border: #dbdbdb;
+$ig-text: #262626;
+$ig-text-secondary: #8e8e8e;
+$ig-link: #00376b;
+$ig-blue: #0095f6;
+$ig-red: #ed4956;
+$ig-gradient: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
+
+:host {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  background-color: $ig-bg;
+  color: $ig-text;
+  display: block;
+  width: 100%;
+  overflow-x: hidden;
+}
+
+.ig-container {
+  max-width: 480px;
+  margin: 0 auto;
+  background-color: $ig-white;
+  min-height: 100vh;
+  position: relative;
+  border-left: 1px solid $ig-border;
+  border-right: 1px solid $ig-border;
+  @media (max-width: 480px) { border: none; }
+}
+
+/* UTILS */
+.ms-auto { margin-left: auto; }
+.text-center { text-align: center; }
+.text-white { color: white; }
+.p-3 { padding: 12px; }
+.mb-3 { margin-bottom: 16px; }
+.mb-5 { margin-bottom: 60px; }
+
+/* === 1. STORY MODE === */
+.ig-story-overlay {
+  position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 9999;
+  background: #000; color: #fff; display: flex; flex-direction: column;
+}
+.ig-story-bg {
+  position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+  background-size: cover; background-position: center; opacity: 0.9;
+  &::after {
+    content: ''; position: absolute; top:0; left:0; width:100%; height:100%;
+    background: linear-gradient(to bottom, rgba(0,0,0,0.3), transparent 20%, transparent 80%, rgba(0,0,0,0.8));
+  }
+}
+.ig-story-header {
+  position: relative; z-index: 2; padding: 8px 12px;
+  .progress-bars { display: flex; gap: 4px; margin-bottom: 8px; }
+  .bar { flex: 1; height: 2px; background: rgba(255,255,255,0.4); border-radius: 2px; overflow: hidden; .fill { height: 100%; background: #fff; transition: width 0.1s linear; } }
+  .user-info {
+    display: flex; align-items: center; gap: 8px;
+    .avatar { width: 32px; height: 32px; border-radius: 50%; }
+    .username { font-weight: 600; font-size: 0.9rem; }
+    .time { font-size: 0.75rem; opacity: 0.8; }
+  }
+}
+.ig-story-content {
+  position: relative; z-index: 2; flex: 1; display: flex; align-items: center; justify-content: center;
+  .glass-box {
+    background: rgba(0,0,0,0.4); backdrop-filter: blur(10px); padding: 20px 40px; border-radius: 16px; text-align: center; border: 1px solid rgba(255,255,255,0.2);
+    p { font-size: 1rem; margin: 0; opacity: 0.9; }
+    h2 { font-size: 1.8rem; margin: 10px 0; font-weight: 700; }
+    .tap-hint { font-size: 0.8rem; opacity: 0.7; display: block; margin-top: 10px; animation: pulse 1.5s infinite; }
+  }
+}
+@keyframes pulse { 0%,100% { opacity: 0.5; } 50% { opacity: 1; } }
+.ig-story-footer {
+  position: relative; z-index: 2; padding: 16px; display: flex; align-items: center; gap: 16px;
+  .reply-box { flex: 1; border: 1px solid rgba(255,255,255,0.5); border-radius: 24px; padding: 10px 20px; font-size: 0.9rem; color: #fff; }
+  i { font-size: 1.5rem; }
+}
+
+/* === 2. FEED MODE === */
+.ig-navbar {
+  position: sticky; top: 0; z-index: 100; background: $ig-white; border-bottom: 1px solid $ig-border; padding: 0 16px; height: 54px; display: flex; align-items: center; justify-content: space-between;
+  .logo { font-family: 'Grand Hotel', cursive; font-size: 1.8rem; }
+  .actions { font-size: 1.4rem; display: flex; gap: 20px; }
+}
+.ig-stories-bar {
+  padding: 10px 0; border-bottom: 1px solid $ig-border; display: flex; gap: 15px; overflow-x: auto;
+  .story-item {
+    display: flex; flex-direction: column; align-items: center; min-width: 70px; cursor: pointer;
+    .ring { width: 62px; height: 62px; border-radius: 50%; padding: 2px; background: $ig-gradient; img, i { width: 100%; height: 100%; border-radius: 50%; border: 2px solid $ig-white; object-fit: cover; background: #eee; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; color: $ig-text; } }
+    span { font-size: 0.75rem; margin-top: 4px; color: $ig-text; }
+  }
+}
+
+/* POST CARD */
+.ig-post {
+  padding-bottom: 10px; border-bottom: 1px solid $ig-border; background: $ig-white;
+  header {
+    display: flex; align-items: center; padding: 10px;
+    .avatar { width: 32px; height: 32px; border-radius: 50%; margin-right: 10px; border: 1px solid $ig-border; }
+    .info { display: flex; flex-direction: column; font-size: 0.9rem; }
+    .username { font-weight: 600; color: $ig-text; }
+    .location { font-size: 0.75rem; color: $ig-text-secondary; }
+  }
+  .post-image { width: 100%; img { width: 100%; height: auto; display: block; } }
+  .post-content-box {
+    padding: 40px 20px; text-align: center; background: $ig-bg;
+    .date-display { border: 1px solid $ig-text; display: inline-block; padding: 10px 20px; margin-bottom: 20px; span { display: block; line-height: 1; color: $ig-text; } .day { font-size: 2.5rem; font-weight: 700; } }
+    .details p { color: $ig-text; }
+    .ig-btn-link { display: inline-block; margin-top: 10px; color: $ig-blue; text-decoration: none; font-weight: 600; font-size: 0.9rem; }
+  }
+  .actions { padding: 10px; display: flex; font-size: 1.5rem; .left { display: flex; gap: 16px; } i { color: $ig-text; } }
+  .content {
+    padding: 0 12px; font-size: 0.9rem;
+    .likes { font-weight: 600; margin-bottom: 6px; color: $ig-text; }
+    .caption { line-height: 1.4; color: $ig-text; .username { font-weight: 600; margin-right: 5px; color: $ig-text; } }
+    .time { font-size: 0.7rem; color: $ig-text-secondary; margin-top: 6px; margin-bottom: 10px; }
+  }
+}
+
+/* === CAROUSEL GALLERY STYLE === */
+.carousel-container {
+  position: relative; width: 100%; padding-bottom: 100%; overflow: hidden; background-color: $ig-bg;
+  .carousel-wrapper {
+    position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none;
+    &::-webkit-scrollbar { display: none; }
+    .carousel-item {
+      flex: 0 0 100%; width: 100%; height: 100%; scroll-snap-align: start;
+      img { width: 100%; height: 100%; object-fit: cover; }
+    }
+  }
+  .multi-photo-icon { position: absolute; top: 15px; right: 15px; color: rgba(255,255,255,0.9); font-size: 1.2rem; z-index: 10; text-shadow: 0 1px 2px rgba(0,0,0,0.3); pointer-events: none; }
+  .carousel-dots {
+    position: absolute; bottom: 15px; left: 50%; transform: translateX(-50%); display: flex; gap: 4px; z-index: 10; pointer-events: none;
+    .dot { width: 6px; height: 6px; border-radius: 50%; background-color: rgba(255,255,255,0.4); &.active { background-color: $ig-blue; } }
+  }
+}
+
+/* RSVP & Comments */
+.gift-box { text-align: center; background: $ig-bg; padding: 20px; border-radius: 8px; border: 1px solid $ig-border; h3 { margin-top: 0; color: $ig-text; font-size: 1.2rem; } }
+.ig-divider { border: 0; border-top: 1px solid $ig-border; margin: 20px 0; }
+.section-title { font-size: 1rem; font-weight: 600; color: $ig-text-secondary; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 1px; }
+
+/* CHILD COMPONENT OVERRIDES */
+::ng-deep {
+  app-digital-angpao {
+    .angpao-card { background-color: $ig-white !important; border: 1px solid $ig-border !important; color: $ig-text !important; box-shadow: none !important; }
+    .angpao-card__bank-name, .angpao-card__number { color: $ig-text !important; }
+    .angpao-card__owner { color: $ig-text-secondary !important; }
+    .angpao-card__button { color: $ig-blue !important; border: 1px solid $ig-border !important; background: transparent !important; }
+  }
+  app-rsvp-form {
+    .form-control { background: $ig-bg !important; border: 1px solid $ig-border !important; color: $ig-text !important; }
+    label { color: $ig-text-secondary !important; }
+    .rsvp-button { background: $ig-blue !important; color: #fff !important; border-radius: 4px !important; }
+  }
+  app-guestbook {
+    .guestbook-form h4 { display: none !important; }
+    .guestbook-form {
+      background: transparent !important; padding: 0 !important; margin-bottom: 25px !important; border: none !important;
+      display: flex; flex-direction: column; /* Fix untuk tombol */
+    }
+    .form-control {
+      background: $ig-bg !important; border: 1px solid $ig-border !important; border-radius: 4px !important;
+      padding: 10px !important; color: $ig-text !important; width: 100% !important;
+      &:focus { border-color: $ig-text-secondary !important; box-shadow: none !important; }
+    }
+    /* TOMBOL KIRIM UCAPAN FIXED */
+    .guestbook-button {
+      background: $ig-blue !important; color: #fff !important; width: 100% !important;
+      padding: 10px 0 !important; font-weight: 600 !important; border-radius: 4px !important;
+      margin-top: 8px !important; float: none !important;
+    }
+    .guestbook-list { margin-top: 15px !important; max-height: 300px !important; overflow-y: auto !important; border-top: 1px solid $ig-border !important; padding-top: 10px !important; }
+    .guestbook-list h4 { display: none !important; }
+    .guestbook-entry { background: transparent !important; border: none !important; margin-bottom: 10px !important; display: flex !important; gap: 10px !important; }
+    .guestbook-entry__profile-pic { width: 32px !important; height: 32px !important; border-radius: 50% !important; border: 1px solid $ig-border !important; }
+    .guestbook-entry__name { color: $ig-text !important; font-weight: 700 !important; margin-right: 5px !important; }
+    .guestbook-entry__message { color: $ig-text !important; }
+    .guestbook-entry__timestamp { color: $ig-text-secondary !important; margin-top: 2px !important; }
+  }
+}
+
+/* ANIMASI CD */
+.music-control {
+  position: fixed; bottom: 70px; right: 20px; z-index: 1000; width: 50px; height: 50px; cursor: pointer;
+  .cd-disc {
+    width: 100%; height: 100%; border-radius: 50%; background: radial-gradient(circle, #333 10%, #000 100%); border: 2px solid $ig-white; box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    position: relative; display: flex; align-items: center; justify-content: center; animation: spin 4s linear infinite;
+    .cd-inner { position: absolute; width: 15px; height: 15px; background: #fff; border-radius: 50%; z-index: 2; }
+    .cd-cover { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; opacity: 0.7; }
+  }
+  &.paused .cd-disc { animation-play-state: paused; opacity: 0.7; filter: grayscale(100%); }
+  .music-notes { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; i { position: absolute; font-size: 14px; color: $ig-text; opacity: 0; } }
+  &:not(.paused) .note-1 { animation: floatNote 2s infinite; left: 0px; top: 0px; color: $ig-red; }
+  &:not(.paused) .note-2 { animation: floatNote 2.5s infinite 0.8s; right: 0px; top: 10px; color: $ig-blue; }
+}
+@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+@keyframes floatNote { 0% { transform: translateY(0) rotate(0) scale(0.8); opacity: 0; } 50% { opacity: 1; } 100% { transform: translateY(-30px) rotate(20deg) scale(1.2); opacity: 0; } }
+
+.ig-bottom-nav {
+  position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 100%; max-width: 480px; height: 50px; background: $ig-white; border-top: 1px solid $ig-border; display: flex; justify-content: space-around; align-items: center; font-size: 1.5rem; z-index: 900;
+  i { color: $ig-text; cursor: pointer; } .mini-avatar { width: 24px; height: 24px; border-radius: 50%; border: 1px solid $ig-border; }
+}
+.youtube-hidden { position: absolute; top: -9999px; left: -9999px; width: 1px; height: 1px; visibility: hidden; }
